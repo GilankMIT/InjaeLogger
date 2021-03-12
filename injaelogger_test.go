@@ -1,6 +1,7 @@
 package injaelogger
 
 import (
+	"fmt"
 	"github.com/GilankMIT/InjaeLogger/log"
 	zerolog "github.com/rs/zerolog/log"
 	"strconv"
@@ -102,4 +103,20 @@ func TestLogRotation(t *testing.T) {
 		log.Info().Msg("This is a log")
 	}
 	log.WithLogRotationWorker()
+}
+
+func TestLogWriteLevel(t *testing.T) {
+	log.AppName = "InjaeLoggerWriteFile"
+	log.LogFolder = "./log_folder"
+	log.WriteLogToFile(true)
+	log.SetLogRotationDuration(time.Hour * 24 * 90)
+	for i := 0; i < 100; i++ {
+		log.Write("This is a log to file, no std out " + strconv.Itoa(i))
+	}
+
+	//do sleep to ensure log writer finish the job
+	sleeper := time.NewTimer(time.Second * 10)
+	<-sleeper.C
+
+	fmt.Println("Logger finished working")
 }

@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func WriteLog(l *Logger) {
+func OutputLog(l *Logger) {
 	log.WithLevel(zerolog.Level(l.logLevel)).Msg(l.message)
 }
 
@@ -31,7 +31,6 @@ var logWriterPool = make(chan string, 50)
 
 func pushLog(logText string) {
 	logWriterPool <- logText
-
 }
 
 func logWriterPoolListen() {

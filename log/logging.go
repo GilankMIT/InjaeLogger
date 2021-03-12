@@ -33,3 +33,12 @@ func Error() *Logger {
 	l := newLogger(ErrorLevel)
 	return l
 }
+
+func Write(message string) *Logger {
+	l := newLogger(WriteLevel)
+	l.completeMessage["message"] = message
+
+	jsonMessage := l.buildMessage()
+	l.sendLog(jsonMessage)
+	return l
+}

@@ -47,6 +47,8 @@ const (
 	FatalLevel
 	// PanicLevel defines panic log level.
 	PanicLevel
+	// WriteLevel define write level log (no output in std.out, only write to file)
+	WriteLevel
 )
 
 func (l Level) String() string {
@@ -63,6 +65,8 @@ func (l Level) String() string {
 		return "fatal"
 	case PanicLevel:
 		return "panic"
+	case WriteLevel:
+		return "write"
 	}
 	return ""
 }
@@ -144,11 +148,14 @@ func (l *Logger) sendLog(message string) {
 	if writeLog {
 		err := logFileWriter(message)
 		if err != nil {
-			log.Println(message)
+			log.Println(err)
 		}
 	}
 
-	WriteLog(l)
+	if l.logLevel == WriteLevel {
+		return
+	}
+	OutputLog(l)
 }
 
 func getLogTrace() (fileName string, funcName string) {
@@ -171,16 +178,4 @@ func getLogFile() string {
 		return AppName + "_" + time.Now().Format("2006-01-02") + ".log"
 	}
 	return "log_" + time.Now().Format("2006-01-02") + ".log"
-}
-
-func LogRotationWorker() {
-	//run ticker
-	ticker := time.NewTicker(RotationDuration)
-
-	for {
-		select {
-		case <-ticker.C:
-			//TODO remove past log file
-		}
-	}
 }
