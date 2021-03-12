@@ -24,12 +24,13 @@ import (
 )
 
 var (
-	LogFolder        = "./log" //default log folder
-	currentLogFile   *os.File
-	inUseLogFileName string
-	RotationDuration = time.Hour * 24 * 30 //default rotation day 30 day
-	AppName          = ""
-	writeLog         = false
+	LogFolder         = "./log" //default log folder
+	currentLogFile    *os.File
+	inUseLogFileName  string
+	RotationDuration  = time.Hour * 24 * 30 //default rotation day 30 day
+	AppName           = ""
+	writeLog          = false
+	fileRuntimeCaller = 3 //default is 3
 )
 
 type Level uint8
@@ -161,7 +162,7 @@ func (l *Logger) sendLog(message string) {
 func getLogTrace() (fileName string, funcName string) {
 
 	//runtime.Caller skip is 3 because it is called from logging function -> newLogger() -> getLogTrace()
-	pc, file, line, ok := runtime.Caller(3)
+	pc, file, line, ok := runtime.Caller(fileRuntimeCaller)
 	if !ok {
 		panic("Could not get context info for logger!")
 	}
@@ -178,4 +179,9 @@ func getLogFile() string {
 		return AppName + "_" + time.Now().Format("2006-01-02") + ".log"
 	}
 	return "log_" + time.Now().Format("2006-01-02") + ".log"
+}
+
+//SetCaller is used in case there is other dependency that want to integrate InjaeLogger
+func SetCaller(caller int) {
+	fileRuntimeCaller = caller
 }
