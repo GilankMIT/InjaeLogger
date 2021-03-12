@@ -1,4 +1,4 @@
-module injaelogger
+module github.com/GilankMIT/InjaeLogger
 
 go 1.15
 
